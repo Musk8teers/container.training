@@ -817,6 +817,18 @@ EOF
         sudo tar -zxvf- -C /usr/local/bin kubent
         kubent --version
     fi"
+
+    # Install Flux CLI
+    # based upon https://fluxcd.io/install.sh
+    pssh "
+    if [ ! -x /usr/local/bin/flux ]; then
+        export VERSION_FLUX=\$(curl -fsSL https://api.github.com/repos/fluxcd/flux2/releases/latest | jq --raw-output .tag_name | sed s/v//)
+        echo \$VERSION_FLUX
+        curl -fsSL https://github.com/fluxcd/flux2/releases/download/v\${VERSION_FLUX}/flux_\${VERSION_FLUX}_linux_$ARCH.tar.gz |
+        sudo tar -zxvf- -C /usr/local/bin flux
+        flux completion bash | sudo tee /etc/bash_completion.d/flux
+        flux --version
+    fi"
 }
 
 _cmd kubereset "Wipe out Kubernetes configuration on all nodes"
